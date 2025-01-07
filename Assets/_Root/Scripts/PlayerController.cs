@@ -15,21 +15,19 @@ namespace Nothing
 
         private ReactiveProperty<bool> _isPlaying = new();
 
-        private CompositeDisposable _disposables = new();
-
         private void Start()
         {
             _inputProvider.OnInputTypeDown(InputType.MAINMOUSE)
             .Subscribe(_ =>
             {
                 _isPlaying.Value = true;
-            }).AddTo(_disposables);
+            }).AddTo(this);
 
             _inputProvider.OnInputTypeUp(InputType.MAINMOUSE)
             .Subscribe(_ =>
             {
                 _isPlaying.Value = false;
-            }).AddTo(_disposables);
+            }).AddTo(this);
 
             _isPlaying
             .Subscribe(isPlay =>
@@ -42,7 +40,7 @@ namespace Nothing
                 {
                     _timelineController.Resume();
                 }
-            }).AddTo(_disposables);
+            }).AddTo(this);
         }
 
         private void Update()
@@ -51,12 +49,6 @@ namespace Nothing
             {
                 _timelineController.PlayBack();
             }
-        }
-
-        private void OnDestroy()
-        {
-            _disposables.Clear();
-            _disposables.Dispose();
         }
     }
 }
